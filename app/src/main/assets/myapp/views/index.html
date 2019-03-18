@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello world</title>
+</head>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+<script>
+      var socket = io('http://localhost:3000');
+      socket.emit('my other event', 'Hello World');
+      socket.on('news', function(data){
+      	document.write(data.hello);
+      })
+   </script>
+<body>Hello world</body>
+</html>
+<script>
+    document.write('hello chhekur from node');
+</script>
