@@ -2,6 +2,9 @@ package com.yourorg.sample;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -19,67 +22,101 @@ import static android.content.Context.ACTIVITY_SERVICE;
 
 public class Utils {
 
-    public static void copyFolder(AssetManager am, String folderName, String dest){
-        try{
-            String files [] = am.list(folderName);
-            if(files.length == 0){
-                copyFile(am, folderName, dest);
-            }else{
-                File dir = new File(dest + "/" + folderName);
-                if(! dir.exists()){
-                    dir.mkdir();
-                    for(String file :files){
-                        copyFolder(am, folderName + "/" + file, dest);
-                    }
+    public static boolean deleteFolderRecursively(File file) {
+        try {
+            boolean res=true;
+            for (File childFile : file.listFiles()) {
+                if (childFile.isDirectory()) {
+                    res &= deleteFolderRecursively(childFile);
+                } else {
+                    res &= childFile.delete();
                 }
             }
-        }catch (IOException e){
-            Log.e("tag", "I/O Exception", e);
+            res &= file.delete();
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public static void copyFile(AssetManager am, String filename, String dest){
+    public static boolean copyAssetFolder(AssetManager assetManager, String fromAssetPath, String toPath) {
+        try {
+            String[] files = assetManager.list(fromAssetPath);
+            boolean res = true;
+
+            if (files.length==0) {
+                //If it's a file, it won't have any assets "inside" it.
+                res &= copyAsset(assetManager,
+                        fromAssetPath,
+                        toPath);
+            } else {
+                new File(toPath).mkdirs();
+                for (String file : files)
+                    res &= copyAssetFolder(assetManager,
+                            fromAssetPath + "/" + file,
+                            toPath + "/" + file);
+            }
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean copyAsset(AssetManager assetManager, String fromAssetPath, String toPath) {
         InputStream in = null;
         OutputStream out = null;
-        try{
-            in = am.open(filename);
-            out = new FileOutputStream(dest + "/" + filename);
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
+        try {
+            in = assetManager.open(fromAssetPath);
+            new File(toPath).createNewFile();
+            out = new FileOutputStream(toPath);
+            copyFile(in, out);
             in.close();
             in = null;
             out.flush();
             out.close();
             out = null;
-        }catch (IOException e){
-            Log.e("tag","I/O Excetion", e);
+            return true;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public static void copyAssetFile(AssetManager am, String src, String dest)
-    {
+    public static void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
+        }
+    }
+
+    public static boolean wasAPKUpdated(Context applicationContext) {
+        SharedPreferences prefs = applicationContext.getSharedPreferences("NODEJS_MOBILE_PREFS", Context.MODE_PRIVATE);
+        long previousLastUpdateTime = prefs.getLong("NODEJS_MOBILE_APK_LastUpdateTime", 0);
+        long lastUpdateTime = 1;
         try {
-            File destFile = new File(dest);
-            if (!destFile.exists())
-                destFile.createNewFile();
-
-            InputStream in = am.open(src);
-            FileOutputStream out = new FileOutputStream(dest);
-
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-            in.close();
-            out.close();
-
-        } catch (IOException e) {
+            PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(applicationContext.getPackageName(), 0);
+            lastUpdateTime = packageInfo.lastUpdateTime;
+        } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        return (lastUpdateTime != previousLastUpdateTime);
+    }
+
+    public static void saveLastUpdateTime(Context applicationContext) {
+        long lastUpdateTime = 1;
+        try {
+            PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(applicationContext.getPackageName(), 0);
+            lastUpdateTime = packageInfo.lastUpdateTime;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        SharedPreferences prefs = applicationContext.getSharedPreferences("NODEJS_MOBILE_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("NODEJS_MOBILE_APK_LastUpdateTime", lastUpdateTime);
+        editor.commit();
     }
 
     // Returns the address of the first network interface that is running
