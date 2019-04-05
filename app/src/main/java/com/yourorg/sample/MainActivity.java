@@ -1,8 +1,10 @@
 package com.yourorg.sample;
 
 import android.icu.text.SymbolTable;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -10,6 +12,7 @@ import android.webkit.WebViewClient;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -24,6 +27,20 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("node");
     }
 
+    public WebView myWebView ;
+
+    // override back button to webview back button
+
+    @Override
+    public void onBackPressed() {
+        if (myWebView.canGoBack()) {
+            myWebView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
     //We just want one instance of node running in the background.
     public static boolean _startedNodeAlready=false;
 
@@ -31,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final WebView myWebView = (WebView) findViewById(R.id.webview);
-        myWebView.setWebViewClient(new WebViewClient());
-        myWebView.getSettings().setJavaScriptEnabled(true);
 
         if( !_startedNodeAlready ) {
             _startedNodeAlready=true;
@@ -59,51 +73,88 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).start();
         }
+
+        // webview
+
+        myWebView = (WebView) findViewById(R.id.webview);
+        myWebView.setWebViewClient(new WebViewClient());
+        myWebView.getSettings().setJavaScriptEnabled(true);
+        myWebView.getSettings().setAllowFileAccessFromFileURLs(true);
+        myWebView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         myWebView.loadUrl("file:///android_asset/myapp/views/index.html");
-        final Socket socket;
-        try{
-            socket = IO.socket("http://localhost:3000");
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
-                @Override
-                public void call(Object... args) {
-                    socket.emit("foo", "hi");
-                }
 
-            }).on("helloFromNode", new Emitter.Listener() {
 
-                @Override
-                public void call(Object... args) {
-                    System.out.println("Hello from node");
-//                    socket.emit("helloFromJava", "Hello Node this is java");
-                }
 
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+        // hardware acceleration
 
-                @Override
-                public void call(Object... args) {}
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            // chromium, enable hardware acceleration
+//            myWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//        } else {
+//            // older android version, disable hardware acceleration
+//            myWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//        }
 
-            });
-            socket.connect();
-            socket.emit("helloFromJava", "Hello Node this is java");
-            socket.on("helloFromNode", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    System.out.println(args[0]);
-                }
-            });
-            socket.on("getClientPath", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    socket.emit("resClientPath", getApplicationContext().getFilesDir().getAbsolutePath());
-                }
-            });
 
-//            socket.emit("helloFromJava", "Hello Java");
+        // java ipc socket
 
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        JavaIPC Socket = null;
+        try {
+            Socket = new JavaIPC(3001);
+            Socket.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        // java socket.io client
+
+
+//
+//        final Socket socket;
+//        try{
+//            socket = IO.socket("http://localhost:3000");
+//            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+//
+//                @Override
+//                public void call(Object... args) {
+//                    socket.emit("foo", "hi");
+//                }
+//
+//            }).on("helloFromNode", new Emitter.Listener() {
+//
+//                @Override
+//                public void call(Object... args) {
+//                    System.out.println("Hello from node");
+////                    socket.emit("helloFromJava", "Hello Node this is java");
+//                }
+//
+//            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+//
+//                @Override
+//                public void call(Object... args) {}
+//
+//            });
+//            socket.connect();
+//            socket.emit("helloFromJava", "Hello Node this is java");
+//            socket.on("helloFromNode", new Emitter.Listener() {
+//                @Override
+//                public void call(Object... args) {
+//                    System.out.println(args[0]);
+//                }
+//            });
+//            socket.on("getClientPath", new Emitter.Listener() {
+//                @Override
+//                public void call(Object... args) {
+//                    socket.emit("resClientPath", getApplicationContext().getFilesDir().getAbsolutePath());
+//                }
+//            });
+//
+////            socket.emit("helloFromJava", "Hello Java");
+//
+//        }catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
 
 
     }
