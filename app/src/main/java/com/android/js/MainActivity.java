@@ -1,22 +1,16 @@
-package com.yourorg.sample;
+package com.android.js;
 
-import android.icu.text.SymbolTable;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
-
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // check and request for required permission
+        PermissionRequest.checkAndAskForPermissions(this, this);
+
         if( !_startedNodeAlready ) {
             _startedNodeAlready=true;
             new Thread(new Runnable() {
@@ -74,16 +71,36 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         }
 
-        // webview
+
+
+
+
+            // webview
 
         myWebView = (WebView) findViewById(R.id.webview);
         myWebView.setWebViewClient(new WebViewClient());
         myWebView.getSettings().setJavaScriptEnabled(true);
+        myWebView.getSettings().setDomStorageEnabled(true);
+        myWebView.getSettings().setAllowFileAccess(true);
         myWebView.getSettings().setAllowFileAccessFromFileURLs(true);
         myWebView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        myWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
         myWebView.loadUrl("file:///android_asset/myapp/views/index.html");
 
 
+
+        // entertain webview camera request
+
+        myWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onPermissionRequest(final android.webkit.PermissionRequest request) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    request.grant(request.getResources());
+                }
+            }
+
+        });
 
 
         // hardware acceleration

@@ -1,4 +1,4 @@
-package com.yourorg.sample;
+package com.android.js;
 
 import android.app.ActivityManager;
 import android.content.Context;

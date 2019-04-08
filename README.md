@@ -1,18 +1,12 @@
-# Native Gradle Sample
+# Android JS Sample
 
 An Android Studio project that uses the [`Node.js on Mobile`]( https://github.com/janeasystems/nodejs-mobile) shared library.
 
-The sample app runs the node.js engine in a background thread to start an HTTP server on port 3000 and return the `process.versions` value. The app's Main Activity UI has a button to query the server and show the server's response. Alternatively, it's also possible to access the server from a browser running on a different device connected to the same local network.
+The sample app runs the node.js engine in a background thread to start an Main process which is written by user. The app's Main Activity UI has a webview which renders the UI templates (HTML/CSS) which is provided by user as view.
 
 ## How to run
  - Clone this project.
- - Download the Node.js on Mobile shared library from [here](https://github.com/janeasystems/nodejs-mobile/releases/download/nodejs-mobile-v0.1.3/nodejs-mobile-v0.1.3-android.zip).
- - Copy the `bin/` folder from inside the downloaded zip file to `app/libnode/bin` (There are `copy-libnode.so-here` files in each architecture's path for convenience). If it's been done correctly you'll end with the following paths for the binaries:
-   - `app/libnode/bin/arm64-v8a/libnode.so`
-   - `app/libnode/bin/armeabi-v7a/libnode.so`
-   - `app/libnode/bin/x86/libnode.so`
-   - `app/libnode/bin/x86_64/libnode.so`
- - In Android Studio import the `android/native-gradle/` gradle project. It will automatically check for dependencies and prompt you to install missing requirements (i.e. you may need to update the Android SDK build tools to the required version (25.0.3) and install CMake to compile the C++ file that bridges Java to the Node.js on Mobile library).
+ - In Android Studio import the `androidjs-core` gradle project. It will automatically check for dependencies and prompt you to install missing requirements (i.e. you may need to update the Android SDK build tools to the required version (28.0.3) and install CMake to compile the C++ file that bridges Java to the Node.js on Mobile library).
  - After the gradle build completes, run the app on a compatible device.
 
 
@@ -61,7 +55,7 @@ Convert the existing `stringFromJNI` function into the `startNodeWithArguments` 
 ```cc
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_yourorg_sample_MainActivity_stringFromJNI(
+Java_com_android_js_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */)
 ```
@@ -70,7 +64,7 @@ to:
 
 ```cc
 extern "C" jint JNICALL
-Java_com_yourorg_sample_MainActivity_startNodeWithArguments(
+Java_com_android_js_MainActivity_startNodeWithArguments(
         JNIEnv *env,
         jobject /* this */,
         jobjectArray arguments)
@@ -86,7 +80,7 @@ The final `native-lib.cpp` looks like this:
 
 //node's libUV requires all arguments being on contiguous memory.
 extern "C" jint JNICALL
-Java_com_yourorg_sample_MainActivity_startNodeWithArguments(
+Java_com_android_js_MainActivity_startNodeWithArguments(
         JNIEnv *env,
         jobject /* this */,
         jobjectArray arguments) {
@@ -171,14 +165,6 @@ Remove the references to the native function, that was replaced in `native-lib.c
 #### Start a background thread to run `startNodeWithArguments`:
 
 The app uses a background thread to run the Node.js engine and it supports to run only one instance of it.  
-The node code is a simple HTTP server on port 3000 that returns `process.versions`. For simplicity, the node code is embedded in the `MainActivity.java` file:
-```js
-var http = require('http');
-var versions_server = http.createServer( (request, response) => {
-  response.end('Versions: ' + JSON.stringify(process.versions));
-});
-versions_server.listen(3000);
-```
 
 Add a reference to the `startNodeWithArguments` function, the Java signature is `public native Integer startNodeWithArguments(String[] arguments);`.
 
@@ -206,12 +192,21 @@ public class MainActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    startNodeWithArguments(new String[]{"node", "-e",
-                            "var http = require('http'); " +
-                                    "var versions_server = http.createServer( (request, response) => { " +
-                                    "  response.end('Versions: ' + JSON.stringify(process.versions)); " +
-                                    "}); " +
-                                    "versions_server.listen(3000);"
+                    //The path where we expect the node project to be at runtime.
+                    String nodeDir=getApplicationContext().getFilesDir().getAbsolutePath()+"/myapp";
+                    if (Utils.wasAPKUpdated(getApplicationContext())) {
+                        //Recursively delete any existing nodejs-project.
+                        File nodeDirReference=new File(nodeDir);
+                        if (nodeDirReference.exists()) {
+                            Utils.deleteFolderRecursively(new File(nodeDir));
+                        }
+                        //Copy the node project from assets into the application's data path.
+                        Utils.copyAssetFolder(getApplicationContext().getAssets(), "myapp", nodeDir);
+
+                        Utils.saveLastUpdateTime(getApplicationContext());
+                    }
+                    startNodeWithArguments(new String[]{"node",
+                            nodeDir+"/main.js"
                     });
                 }
             }).start();
@@ -228,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
 ### Add internet permissions to Manifest
 
-Since the app runs an HTTP server, it requires the right permissions in `app/src/main/AndroidManifest.xml`. Add the following line under the `<manifest>` tag:
+Since the app could beed Internet access, it requires the right permissions in `app/src/main/AndroidManifest.xml`. Add the following line under the `<manifest>` tag:
 ```
     <uses-permission android:name="android.permission.INTERNET"/>
 ```
@@ -285,9 +280,9 @@ The shared library was built using the `libC++` STL, therefore the `ANDROID_STL=
 
 ```groovy
     defaultConfig {
-        applicationId "com.yourorg.sample"
+        applicationId "com.android.js"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -326,68 +321,6 @@ android {
 
 ### Add simple UI to test
 
-At this point, it's already possible to run the app on an Android device and access the HTTP server from any device connected to the same local network. If the Android device's IP is `192.168.1.100` point the browser at `http://192.168.1.100:3000/`.
-
+At this point, it's already possible to run the app on an Android device. Create HTML views in `myapp/views/` folder and change the URL of webview.
 However, the sample also comes with the UI to query the local HTTP server and show the response.
-
-#### Create a Button and TextView:
-
-Edit the `activity_main.xml` ( `app/src/main/res/layout/activity_main.xml` ) in Android Studio, delete the existing `TextView` and add a `Button` with id `btVersions` and a `TextView` with id `tvVersions`
-
-#### Add Button event to access the HTTP server:
-
-In `MainActivity.java`, create an event to connect to the HTTP server when tapping the `Button` and place the resulting response in the `TextView`. Start by adding the required `import statements`:
-```java
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.os.AsyncTask;
-import java.net.*;
-import java.io.*;
-```
-
-Next, create the `Button` event in `MainActivity`'s `onCreate` function, after the Node.js thread's initialization.
-
-```java
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-...
-    
-        final Button buttonVersions = (Button) findViewById(R.id.btVersions);
-        final TextView textViewVersions = (TextView) findViewById(R.id.tvVersions);
-
-        buttonVersions.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                //Network operations should be done in the background.
-                new AsyncTask<Void,Void,String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        String nodeResponse="";
-                        try {
-                            URL localNodeServer = new URL("http://localhost:3000/");
-                            BufferedReader in = new BufferedReader(
-                                    new InputStreamReader(localNodeServer.openStream()));
-                            String inputLine;
-                            while ((inputLine = in.readLine()) != null)
-                                nodeResponse=nodeResponse+inputLine;
-                            in.close();
-                        } catch (Exception ex) {
-                            nodeResponse=ex.toString();
-                        }
-                        return nodeResponse;
-                    }
-                    @Override
-                    protected void onPostExecute(String result) {
-                        textViewVersions.setText(result);
-                    }
-                }.execute();
-
-            }
-        });
-    }
-```
-
-Tapping the UI's `Button`, runs an asynchronously call to the local Node.js's HTTP server and shows the resulting response in the `TextView`.
 

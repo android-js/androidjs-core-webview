@@ -1,4 +1,4 @@
-package com.yourorg.sample;
+package com.android.js;
 
 import java.io.DataInputStream;
 import java.io.IOException;
