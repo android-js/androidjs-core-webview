@@ -1,33 +1,25 @@
 package com.android.js;
 
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 
-public class JavaIPC extends Thread {
-    private ServerSocket serverSocket;
+public class JavaIPC {
+    private MainActivity activity;
+    private WebView myWebView;
 
-    public JavaIPC(int port) throws IOException{
-        serverSocket = new ServerSocket(port);
-//        serverSocket.setSoTimeout(10000);
+    public JavaIPC(MainActivity activity, WebView myWebView){
+        this.activity = activity;
+        this.myWebView = myWebView;
     }
 
-    public void run(){
-        while(true) try {
-            java.net.Socket server = serverSocket.accept();
-            System.out.println("Java: a user connected");
-            DataInputStream in = new DataInputStream(server.getInputStream());
-            System.out.println(in.readUTF());
-            if(in.readUTF().equals("hello")){
-                on("hello", "bello");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void on(String s1, String s2){
-        System.out.println("java: " + s1 + s2);
+    @JavascriptInterface
+    public String helloWorld(){
+        System.out.println("Java IPC Works");
+        return "Hello World";
     }
 }

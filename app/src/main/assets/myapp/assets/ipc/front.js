@@ -59,3 +59,25 @@ socket.on('sync-response', function(eventName, res){
 function sendSync(event, ...args){
     socket.emit('sync-response-from-front', event, ...args);
 }
+
+var mediaSource = new MediaSource();
+
+var androidjs = {}
+
+//console.log(document.querySelector('#video'))
+
+androidjs.camera = {
+   init : function(dom, constraints){
+       navigator.mediaDevices.getUserMedia(
+         constraints
+       ).then(
+         function(stream, id){
+           window.stream = stream;
+           dom.srcObject = stream;
+         },
+         function(error){
+           console.log(error);
+         }
+       );
+   }
+}
