@@ -1,6 +1,7 @@
 package com.android.js;
 
 import android.os.Build;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // check and request for required permission
+        System.out.println(Environment.getExternalStorageDirectory());
         PermissionRequest.checkAndAskForPermissions(this, this);
 
         if( !_startedNodeAlready ) {
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
             // webview
 
         myWebView = (WebView) findViewById(R.id.webview);
+
+        // adding javascript interface for creating javascript to java IPC
+
+        myWebView.addJavascriptInterface(new JavaIPC(this, myWebView), "android");
+
+
         myWebView.setWebViewClient(new WebViewClient());
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.getSettings().setDomStorageEnabled(true);
@@ -97,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPermissionRequest(final android.webkit.PermissionRequest request) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     request.grant(request.getResources());
+                    WebView.setWebContentsDebuggingEnabled(true);
                 }
             }
 
@@ -112,67 +121,6 @@ public class MainActivity extends AppCompatActivity {
 //            // older android version, disable hardware acceleration
 //            myWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 //        }
-
-
-        // java ipc socket
-
-        JavaIPC Socket = null;
-        try {
-            Socket = new JavaIPC(3001);
-            Socket.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // java socket.io client
-
-
-//
-//        final Socket socket;
-//        try{
-//            socket = IO.socket("http://localhost:3000");
-//            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-//
-//                @Override
-//                public void call(Object... args) {
-//                    socket.emit("foo", "hi");
-//                }
-//
-//            }).on("helloFromNode", new Emitter.Listener() {
-//
-//                @Override
-//                public void call(Object... args) {
-//                    System.out.println("Hello from node");
-////                    socket.emit("helloFromJava", "Hello Node this is java");
-//                }
-//
-//            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-//
-//                @Override
-//                public void call(Object... args) {}
-//
-//            });
-//            socket.connect();
-//            socket.emit("helloFromJava", "Hello Node this is java");
-//            socket.on("helloFromNode", new Emitter.Listener() {
-//                @Override
-//                public void call(Object... args) {
-//                    System.out.println(args[0]);
-//                }
-//            });
-//            socket.on("getClientPath", new Emitter.Listener() {
-//                @Override
-//                public void call(Object... args) {
-//                    socket.emit("resClientPath", getApplicationContext().getFilesDir().getAbsolutePath());
-//                }
-//            });
-//
-////            socket.emit("helloFromJava", "Hello Java");
-//
-//        }catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
-
 
     }
 

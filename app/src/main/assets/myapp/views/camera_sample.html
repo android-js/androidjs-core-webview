@@ -3,12 +3,20 @@
 <head>
     <title>sample</title>
     <link rel="stylesheet" href="camera_sample.css">
+
 </head>
 <body>
 <video id="video" autoplay></video>
+<input type="button" value="RECORD" onclick="startRecording()"/>
+<input type="button" value="SAVE" onclick="stopRecording()" />
+<ul id='ul'>
+    Downloads List:
+</ul>
 <span id = "error"></span>
+<video id = "preview" autoplay></video>
 
 
+<script src = "../assets/ipc/front.js"></script>
 <script src="camera_sample.js"></script>
 </body>
 </html>
