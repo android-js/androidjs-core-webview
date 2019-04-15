@@ -7,16 +7,17 @@
 </head>
 <body>
 <video id="video" autoplay></video>
-<input type="button" value="RECORD" onclick="startRecording()"/>
-<input type="button" value="SAVE" onclick="stopRecording()" />
-<ul id='ul'>
-    Downloads List:
-</ul>
+<button id = "start">start</button>
+<button id = "stop">stop</button>
+<button id = "screenshot">take photo</button><br>
+<span>Preview</span>
+<audio id = "audio" autoplay></audio>
 <span id = "error"></span>
-<video id = "preview" autoplay></video>
+<img src = "" id = "previewScreenshot">
+<video id = "preview" autoplay loop></video>
 
 
-<script src = "../assets/ipc/front.js"></script>
+<script src = "../assets/ipc/androidjs.js"></script>
 <script src="camera_sample.js"></script>
 </body>
 </html>
