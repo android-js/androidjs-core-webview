@@ -44,11 +44,11 @@ limitations under the License.
 // This code is adapted from
 // https://rawgit.com/Miguelao/demos/master/mediarecorder.html
 
-var mediaSource = new MediaSource();
-mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
+//var mediaSource = new MediaSource();
+//mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
 var mediaRecorder;
 var recordedBlobs;
-var sourceBuffer;
+//var sourceBuffer;
 
 var gumVideo = document.querySelector('video#gum');
 var recordedVideo = document.querySelector('video#recorded');
@@ -56,9 +56,21 @@ var recordedVideo = document.querySelector('video#recorded');
 var recordButton = document.querySelector('button#record');
 var playButton = document.querySelector('button#play');
 var downloadButton = document.querySelector('button#download');
-recordButton.onclick = toggleRecording;
-playButton.onclick = play;
-downloadButton.onclick = download;
+//recordButton.onclick = toggleRecording;
+//playButton.onclick = play;
+//downloadButton.onclick = download;
+
+recordButton.addEventListener('click', function(){
+    app.camera.startRecording({mimeType: 'video/webm;codecs=vp9', bitsPerSecond: 100000});
+})
+
+playButton.addEventListener('click', function(){
+    app.camera.stopRecording();
+    app.camera.previewRecording(recordedVideo, {type: 'video/webm'});
+})
+downloadButton.addEventListener('click', function(){
+    app.camera.saveRecording('/storage/emulated/0/', 'newVideo.webm', {type:'video/webm'});
+})
 
 console.log(location.host);
 // window.isSecureContext could be used for Chrome
@@ -75,12 +87,18 @@ var constraints = {
   video: true
 };
 
-navigator.mediaDevices.getUserMedia(
-  constraints
-).then(
-  successCallback,
-  errorCallback
-);
+window.onload = function(){
+    app.camera.getDevices(function(devices){
+        app.camera.init(gumVideo, {video: {deviceId: {exact:devices[1]}}, audio:false});
+    })
+}
+
+//navigator.mediaDevices.getUserMedia(
+//  constraints
+//).then(
+//  successCallback,
+//  errorCallback
+//);
 
 function successCallback(stream) {
   console.log('getUserMedia() got stream: ', stream);
@@ -92,17 +110,17 @@ function errorCallback(error) {
   console.log('navigator.getUserMedia error: ', error);
 }
 
-function handleSourceOpen(event) {
-  console.log('MediaSource opened');
-  sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-  console.log('Source buffer: ', sourceBuffer);
-}
+//function handleSourceOpen(event) {
+//  console.log('MediaSource opened');
+//  sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+//  console.log('Source buffer: ', sourceBuffer);
+//}
 
-function handleDataAvailable(event) {
-  if (event.data && event.data.size > 0) {
-    recordedBlobs.push(event.data);
-  }
-}
+//function handleDataAvailable(event) {
+//  if (event.data && event.data.size > 0) {
+//    recordedBlobs.push(event.data);
+//  }
+//}
 
 function handleStop(event) {
   console.log('Recorder stopped: ', event);

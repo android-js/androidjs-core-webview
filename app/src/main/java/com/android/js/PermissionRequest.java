@@ -54,6 +54,16 @@ public class PermissionRequest {
                         permissionsToBeGranted.add(Manifest.permission.READ_EXTERNAL_STORAGE);
                     }
                     break;
+                case "android.permission.RECORD_AUDIO":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.RECORD_AUDIO);
+                    }
+                    break;
+                case "android.permission.MODIFY_AUDIO_SETTINGS":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
+                    }
+                    break;
             }
         }
         String[] permissions = new String[permissionsToBeGranted.size()];

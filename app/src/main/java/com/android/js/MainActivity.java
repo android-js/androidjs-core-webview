@@ -1,5 +1,6 @@
 package com.android.js;
 
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -83,16 +84,18 @@ public class MainActivity extends AppCompatActivity {
 
         // adding javascript interface for creating javascript to java IPC
 
-        myWebView.addJavascriptInterface(new JavaIPC(this, myWebView), "android");
+        myWebView.addJavascriptInterface(new JavaIPC(this, myWebView), "app");
 
 
-        myWebView.setWebViewClient(new WebViewClient());
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.getSettings().setDomStorageEnabled(true);
         myWebView.getSettings().setAllowFileAccess(true);
+        myWebView.setWebContentsDebuggingEnabled(true);
+        myWebView.setWebViewClient(new WebViewClient());
         myWebView.getSettings().setAllowFileAccessFromFileURLs(true);
         myWebView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         myWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
+
         myWebView.loadUrl("file:///android_asset/myapp/views/index.html");
 
 
@@ -101,12 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
         myWebView.setWebChromeClient(new WebChromeClient() {
 
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onPermissionRequest(final android.webkit.PermissionRequest request) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    request.grant(request.getResources());
-                    WebView.setWebContentsDebuggingEnabled(true);
-                }
+                request.grant(request.getResources());
+
             }
 
         });
