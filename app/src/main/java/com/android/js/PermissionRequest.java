@@ -12,7 +12,9 @@ import java.util.ArrayList;
 public class PermissionRequest {
 
     public static void checkAndAskForPermissions(Activity activity, Context context){
-        ActivityCompat.requestPermissions(activity, checkAndAskForPermissionsHelper(activity, context), 1);
+        String [] permissions = checkAndAskForPermissionsHelper(activity, context);
+        if(permissions.length > 0)
+            ActivityCompat.requestPermissions(activity, permissions, 1);
     }
 
     private static String[] checkAndAskForPermissionsHelper(Activity activity, Context context){
