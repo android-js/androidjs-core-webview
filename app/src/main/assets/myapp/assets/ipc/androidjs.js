@@ -287,3 +287,20 @@ app.camera = camera;
  }
 
  app.microphone = microphone;
+
+
+/**
+ * App Module
+ */
+
+ app.getPath = function(name){
+     return window.android.getPath(name);
+ }
+
+ app.loadURL = function(url){
+     window.location.href = url;
+ }
+
+ app.reload = function(){
+     window.reload();
+ }
