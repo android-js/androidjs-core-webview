@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // check and request for required permission
-        System.out.println(Environment.getExternalStorageDirectory());
+        System.out.println(Environment.getRootDirectory());
         PermissionRequest.checkAndAskForPermissions(this, this);
 
         if( !_startedNodeAlready ) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         // adding javascript interface for creating javascript to java IPC
 
-        myWebView.addJavascriptInterface(new JavaIPC(this, myWebView), "app");
+        myWebView.addJavascriptInterface(new JavaIPC(this, myWebView), "android");
 
 
         myWebView.getSettings().setJavaScriptEnabled(true);
