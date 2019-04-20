@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.widget.ExpandableListView;
 
 import com.android.js.api.Notification;
+import com.android.js.api.Toast;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -88,5 +89,10 @@ public class JavaIPC {
     @JavascriptInterface
     public void initBigNotification(String title, String [] msg){
         notification.initBigNotification(title,  msg);
+    }
+
+    @JavascriptInterface
+    public void showToast(String text, int duration){
+        Toast.showToast(this.activity, text, duration);
     }
 }
