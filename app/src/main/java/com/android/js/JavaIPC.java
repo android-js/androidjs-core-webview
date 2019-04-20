@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.ExpandableListView;
 
+import com.android.js.api.Call;
 import com.android.js.api.Notification;
 import com.android.js.api.Toast;
 
@@ -27,11 +28,13 @@ public class JavaIPC {
     private MainActivity activity;
     private WebView myWebView;
     private Notification notification;
+    private Call call;
 
     public JavaIPC(MainActivity activity, WebView myWebView){
         this.activity = activity;
         this.myWebView = myWebView;
         this.notification = new Notification(activity);
+        this.call = new Call(activity);
     }
 
     @JavascriptInterface
@@ -94,5 +97,10 @@ public class JavaIPC {
     @JavascriptInterface
     public void showToast(String text, int duration){
         Toast.showToast(this.activity, text, duration);
+    }
+
+    @JavascriptInterface
+    public void makeCall(String number){
+        call.makeCall(number);
     }
 }

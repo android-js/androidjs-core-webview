@@ -66,6 +66,11 @@ public class PermissionRequest {
                         permissionsToBeGranted.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
                     }
                     break;
+                case "android.permission.CALL_PHONE":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.CALL_PHONE);
+                    }
+                    break;
             }
         }
         String[] permissions = new String[permissionsToBeGranted.size()];
