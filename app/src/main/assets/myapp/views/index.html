@@ -60,4 +60,11 @@
     //app.loadURL('https://www.google.com/');
     //app.reload();
     //console.log(window.android.helloWorld());
+    app.notification.init("Hello", "Hello World");
+    app.notification.initBig("Hello World", ["1","2","3","4"]);
+    app.notification.show(1);
+
+    app.notification.init("World", "lelo");
+    app.notification.initBig("Hello World", "le")
+    app.notification.show(2);
 </script>

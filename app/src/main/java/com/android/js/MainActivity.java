@@ -11,6 +11,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
+import com.android.js.api.Notification;
+
 import java.io.File;
 import java.io.IOException;
 
