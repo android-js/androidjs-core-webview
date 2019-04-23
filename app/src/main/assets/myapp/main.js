@@ -22,3 +22,6 @@ back.on('save-Image', function(filepath, filename, data){
 back.on('hello', function(){
     console.log('Hello World');
 })
+back.on('Hello', function(msg){
+    console.log('badiya hoo', msg);
+})

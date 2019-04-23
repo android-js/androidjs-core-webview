@@ -335,6 +335,37 @@ let call = {
 app.call = call;
 
 /**
+ * Wi-fi API
+ */
+
+let wifi = {
+    enable: function(){
+        window.android.enableWifi();
+    },
+    disable: function(){
+        window.android.disableWifi();
+    },
+    disconnect: function(){
+        window.android.disconnectWif();
+    },
+    getState: function(){
+        return window.android.getWifiState();
+    },
+    isEnabled: function(){
+        return window.android.isWifiEnabled();
+    },
+    getScanResults: function(){
+        if(! window.android.isWifiEnabled()) window.android.enableWifi();
+        return JSON.parse(window.android.getWifiScanResults());
+    },
+    connect: function(ssid, password){
+        window.android.connectWifi(ssid, password);
+    }
+}
+
+app.wifi = wifi;
+
+/**
  * App Module
  */
 
@@ -347,5 +378,5 @@ app.loadURL = function(url){
 }
 
 app.reload = function(){
-    window.reload();
+    location.reload();
 }
