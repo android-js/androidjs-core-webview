@@ -8,6 +8,10 @@ import android.widget.ExpandableListView;
 import com.android.js.api.Call;
 import com.android.js.api.Notification;
 import com.android.js.api.Toast;
+import com.android.js.api.Wifi;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -29,12 +33,14 @@ public class JavaIPC {
     private WebView myWebView;
     private Notification notification;
     private Call call;
+    private Wifi wifi;
 
     public JavaIPC(MainActivity activity, WebView myWebView){
         this.activity = activity;
         this.myWebView = myWebView;
         this.notification = new Notification(activity);
         this.call = new Call(activity);
+        this.wifi = new Wifi(activity);
     }
 
     @JavascriptInterface
@@ -102,5 +108,40 @@ public class JavaIPC {
     @JavascriptInterface
     public void makeCall(String number){
         call.makeCall(number);
+    }
+
+    @JavascriptInterface
+    public void enableWifi(){
+        wifi.enableWifi();
+    }
+
+    @JavascriptInterface
+    public void disableWifi(){
+        wifi.disableWifi();
+    }
+
+    @JavascriptInterface
+    public void disconnectWifi(){
+        wifi.disconnectWifi();
+    }
+
+    @JavascriptInterface
+    public int getWifiState(){
+        return wifi.getWifiState();
+    }
+
+    @JavascriptInterface
+    public boolean isWifiEnabled(){
+        return wifi.isWifiEnabled();
+    }
+
+    @JavascriptInterface
+    public String getWifiScanResults() throws JSONException {
+        return wifi.getWifiScanResults();
+    }
+
+    @JavascriptInterface
+    public void connectWifi(String ssid, String password){
+        wifi.connectWifi(ssid, password);
     }
 }
