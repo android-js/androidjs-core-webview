@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.widget.ExpandableListView;
 
 import com.android.js.api.Call;
+import com.android.js.api.Hotspot;
 import com.android.js.api.Notification;
 import com.android.js.api.Toast;
 import com.android.js.api.Wifi;
@@ -17,6 +18,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
+
+import javax.net.ssl.HostnameVerifier;
 
 import static android.os.Environment.DIRECTORY_ALARMS;
 import static android.os.Environment.DIRECTORY_DCIM;
@@ -34,6 +37,7 @@ public class JavaIPC {
     private Notification notification;
     private Call call;
     private Wifi wifi;
+    private Hotspot hotspot;
 
     public JavaIPC(MainActivity activity, WebView myWebView){
         this.activity = activity;
@@ -41,6 +45,7 @@ public class JavaIPC {
         this.notification = new Notification(activity);
         this.call = new Call(activity);
         this.wifi = new Wifi(activity);
+        this.hotspot = new Hotspot(activity);
     }
 
     @JavascriptInterface
@@ -143,5 +148,28 @@ public class JavaIPC {
     @JavascriptInterface
     public void connectWifi(String ssid, String password){
         wifi.connectWifi(ssid, password);
+    }
+
+    @JavascriptInterface
+    public void enableHotspot(String ssid){
+        try {
+            hotspot.enableHotspot(ssid);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @JavascriptInterface
+    public void disableHotspot(){
+        try{
+            hotspot.disableHotspot();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @JavascriptInterface
+    public boolean isHotspotEnabled(){
+        return hotspot.isHotspotEnabled();
     }
 }
