@@ -71,6 +71,21 @@ public class PermissionRequest {
                         permissionsToBeGranted.add(Manifest.permission.CALL_PHONE);
                     }
                     break;
+                case "android.permission.ACCESS_WIFI_STATE":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.ACCESS_WIFI_STATE);
+                    }
+                    break;
+                case "android.permission.CHANGE_WIFI_STATE":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.CHANGE_WIFI_STATE);
+                    }
+                    break;
+                case "android.permission.WRITE_SETTINGS":
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_SETTINGS) != PackageManager.PERMISSION_GRANTED) {
+                        permissionsToBeGranted.add(Manifest.permission.WRITE_SETTINGS);
+                    }
+                    break;
             }
         }
         String[] permissions = new String[permissionsToBeGranted.size()];
