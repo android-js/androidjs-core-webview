@@ -355,7 +355,6 @@ let wifi = {
         return window.android.isWifiEnabled();
     },
     getScanResults: function(){
-        if(! window.android.isWifiEnabled()) window.android.enableWifi();
         return JSON.parse(window.android.getWifiScanResults());
     },
     connect: function(ssid, password){
@@ -364,6 +363,25 @@ let wifi = {
 }
 
 app.wifi = wifi;
+
+
+/**
+ * Hotspot API
+ */
+
+let hotspot = {
+    enable: function(ssid){
+        window.android.enableHotspot(ssid);
+    },
+    disable: function(){
+        window.android.disableHotspot();
+    },
+    isEnabled: function(){
+        return window.android.isHotspotEnabled();
+    }
+}
+
+app.hotspot = hotspot;
 
 /**
  * App Module

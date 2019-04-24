@@ -56,6 +56,12 @@
     </body>
 </html>
 <script>
+
+    //app.hotspot.enable("lelo");
+    console.log(app.hotspot.isEnabled());
+    app.hotspot.disable();
+
+
     //console.log(app.getPath('userData'))
     //app.loadURL('https://www.google.com/');
     //app.reload();
@@ -71,21 +77,22 @@
     //app.toast.show("Hello node", 0);
 
     //app.call.makeCall("8519027140");
-    new Promise(function(resolve, reject){
-        app.wifi.enable()
-        setTimeout(resolve, 5000);
-    }).then(function(){
-        console.log(app.wifi.isEnabled());
-        res = app.wifi.getScanResults();
-        res.forEach(function(re){
-            console.log(re.SSID);
-        })
+    //new Promise(function(resolve, reject){
+    //    app.wifi.enable()
+    //    setTimeout(resolve, 5000);
+    //}).then(function(){
+    //    console.log(app.wifi.isEnabled());
+    //    res = app.wifi.getScanResults();
+    //    res.forEach(function(re){
+    //        console.log(re.SSID);
+    //        app.wifi.connect(re.SSID, "");
+    //    })
         //for(let i = 0; i < res.length; i++){
         //    console.log(res[i].SSID);
         //    console.log(app.wifi.isEnabled());
         //    app.wifi.connect(res[i].SSID, "");
         //}
-    })
+    //})
     //app.wifi.enable();
     //app.notification.init("Android JS", "Wifi Enabled");
     //app.notification.show(1);

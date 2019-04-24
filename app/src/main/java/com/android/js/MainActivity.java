@@ -8,6 +8,7 @@ import android.net.LinkProperties;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,10 +18,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
+import com.android.js.api.Hotspot;
 import com.android.js.api.Notification;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -83,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-            // webview
+        // webview
 
         myWebView = (WebView) findViewById(R.id.webview);
 
