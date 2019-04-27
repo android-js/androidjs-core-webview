@@ -57,9 +57,17 @@
 </html>
 <script>
 
+    console.log("Hello this is from webview");
+    //location.href = "http://localhost:4001";
+    //setTimeout(function(){
+        //app.loadURL("http://localhost:4001");
+    //},10000);
+
+    //app.loadURL("http://localhost:4001");
     //app.hotspot.enable("lelo");
-    console.log(app.hotspot.isEnabled());
-    app.hotspot.disable();
+    //console.log(app.hotspot.isEnabled());
+    //app.hotspot.disable();
+    front.send("Hello", "Hello node");
 
 
     //console.log(app.getPath('userData'))

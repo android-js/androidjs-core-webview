@@ -8,6 +8,7 @@ import android.net.LinkProperties;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
     //We just want one instance of node running in the background.
     public static boolean _startedNodeAlready=false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
