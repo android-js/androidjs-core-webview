@@ -26,6 +26,8 @@ back.on('Hello', function(msg){
     console.log('badiya hoo', msg);
 })
 
+console.log("Hello From Node Js")
+
 //const http = require("http");
 //
 //var server = http.createServer(function(req,res){
