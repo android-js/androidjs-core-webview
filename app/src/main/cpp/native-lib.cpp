@@ -64,7 +64,7 @@ int start_redirecting_stdout_stderr() {
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_android_js_MainActivity_stringFromJNI(
+Java_com_android_js_AndroidJSWebviewActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
@@ -73,7 +73,7 @@ Java_com_android_js_MainActivity_stringFromJNI(
 
 //node's libUV requires all arguments being on contiguous memory.
 extern "C" jint JNICALL
-Java_com_android_js_MainActivity_startNodeWithArguments(
+Java_com_android_js_AndroidJSWebviewActivity_startNodeWithArguments(
         JNIEnv *env,
         jobject /* this */,
         jobjectArray arguments) {
