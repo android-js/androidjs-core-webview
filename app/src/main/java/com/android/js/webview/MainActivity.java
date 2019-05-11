@@ -4,11 +4,10 @@ import android.os.Environment;
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import com.android.js.AndroidJSWebviewActivity;
-import com.android.js.PermissionRequest;
+import com.android.js.other.PermissionRequest;
 
 
-public class MainActivity extends AndroidJSWebviewActivity {
+public class MainActivity extends AndroidJSActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
