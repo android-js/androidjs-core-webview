@@ -17,6 +17,10 @@ allprojects {
     repositories {
         jcenter()
         google()
+        mavenCentral()
+        maven{
+            url "$rootDir/app/libs"
+        }
     }
 }
 
