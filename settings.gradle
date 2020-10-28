@@ -1,1 +1,2 @@
+include ':androidjs-release'
 include ':app'

@@ -58,6 +58,7 @@
 <script>
 
     console.log("Hello this is from webview");
+
     //location.href = "http://localhost:4001";
     //setTimeout(function(){
         //app.loadURL("http://localhost:4001");
@@ -65,7 +66,7 @@
 
     //console.log(app.contact.add('abc', '1234567890', 'abc@abc.com').toString())
 
-    console.log(JSON.stringify(app.sms.sendSMS("1234567889", "Hello from chhekur")))
+    //console.log(JSON.stringify(app.sms.sendSMS("1234567889", "Hello from chhekur1")))
 
     //app.call.makeCall("1234567895")
 
@@ -73,10 +74,11 @@
     //app.hotspot.enable("lelo");
     //console.log(app.hotspot.isEnabled());
     //app.hotspot.disable();
-    front.send("Hello", "Hello node");
+    //front.send("Hello", "Hello node");
 
 
-    //console.log(app.getPath('userData'))
+    console.log(app.getPath('userData'), "PATH")
+    console.log(app.getPath('downloads'), "PATH");
     //app.loadURL('https://www.google.com/');
     //app.reload();
     //console.log(window.android.helloWorld());
@@ -110,10 +112,10 @@
     //app.wifi.enable();
     //app.notification.init("Android JS", "Wifi Enabled");
     //app.notification.show(1);
-    //res = app.wifi.getScanResults();
-    //for(let i = 0; i < res.length; i++){
-    //    console.log(res[i].SSID);
-    //    console.log(app.wifi.isEnabled());
-    //    app.wifi.connect(res[i].SSID, "");
-    //}
+    res = app.wifi.getScanResults();
+    for(let i = 0; i < res.length; i++){
+        console.log(res[i].SSID);
+        console.log(app.wifi.isEnabled());
+        app.wifi.connect(res[i].SSID, "");
+    }
 </script>

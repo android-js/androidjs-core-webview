@@ -9,3 +9,5 @@
 .externalNativeBuild
 *.so
 .idea
+androidjs-release
+androidjs-debug
