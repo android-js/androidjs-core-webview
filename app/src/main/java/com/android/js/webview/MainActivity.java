@@ -1,8 +1,8 @@
 package com.android.js.webview;
 
 import android.os.Environment;
-import android.os.Bundle;
 import android.webkit.WebView;
+import android.os.Bundle;
 
 import com.android.js.other.PermissionRequest;
 
@@ -26,7 +26,8 @@ public class MainActivity extends AndroidJSActivity {
 
         // webview
 
-        this.myWebView = (WebView) findViewById(R.id.webview);
+		this.myWebView = (WebView) findViewById(R.id.webview);
+		// this.myVideoView = (VideoView)findViewById(R.id.videoView);
 
         configureWebview(R.mipmap.ic_launcher);
 
